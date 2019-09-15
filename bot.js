@@ -16,17 +16,17 @@ client.on('ready', async () => {
 });
 
 feeder.on('new-item', item => {
-    if (db.has('db.read', item.title)) { return; }
+    if (db.get('db.read').includes(item.title + item.summary)) { return; }
     console.log(item);
     const embed = new Discord.RichEmbed()
         .setTitle(item.title)
         .setURL(item.link)
-        .setDescription(shorten(item.description, 2000))
+        .setDescription(shorten(item.description || '*no content*', 2000))
         .setFooter(item.meta.title)
         .setColor(0x50c878)
         .setTimestamp(item.pubDate);
-    client.channels.get('592177693617815593').send({ embed });
-    db.push('db.read', item.title);
+    client.channels.get(config.messageChannel).send({ embed });
+    db.push('db.read', item.title + item.summary);
 });
 
 client.login(process.env.TOKEN)
