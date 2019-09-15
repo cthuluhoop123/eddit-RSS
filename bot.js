@@ -17,7 +17,6 @@ client.on('ready', async () => {
 
 feeder.on('new-item', item => {
     if (db.get('db.read').includes(item.title + item.summary)) { return; }
-    console.log(item);
     const embed = new Discord.RichEmbed()
         .setTitle(item.link)
         .setURL(item.link)
