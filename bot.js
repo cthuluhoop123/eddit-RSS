@@ -19,13 +19,12 @@ feeder.on('new-item', item => {
     if (db.get('db.read').includes(item.title + item.summary)) { return; }
     console.log(item);
     const embed = new Discord.RichEmbed()
-        .setTitle(item.title)
+        .setTitle(item.link)
         .setURL(item.link)
-        .setDescription(shorten(item.description || '*no content*', 2000))
         .setFooter(item.meta.title)
         .setColor(0x50c878)
         .setTimestamp(item.pubDate);
-    client.channels.get(config.messageChannel).send({ embed });
+    client.channels.get(config.messageChannel).send(shorten(`New Forum Thread - **${item.title}**`, 1000), { embed });
     db.push('db.read', item.title + item.summary);
 });
 
