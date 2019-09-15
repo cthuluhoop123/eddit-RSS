@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const config = require('./config.js');
+
 const db = require('quick.db');
 
 const RssFeedEmitter = require('rss-feed-emitter');
@@ -18,6 +20,9 @@ feeder.on('new-item', item => {
     const embed = new Discord.RichEmbed()
         .setTitle(item.title)
         .setDescription(item.description)
+        .setFooter(item.meta.title)
+        .setColor(0x50c878)
+        .setTimestamp(item.pubDate);
     client.channels.get('592177693617815593').send({ embed });
     // if (db.has('db.read', item.title)) { return; }
     // db.push('db.read', item.title);
@@ -26,44 +31,11 @@ feeder.on('new-item', item => {
 
 client.login(process.env.TOKEN)
     .then(() => {
-        feeder.add({
-            url: 'https://undisputed-rs.com/community/index.php?/forum/22-runescape.xml/',
-            refresh: 2000
-        });
-
-        feeder.add({
-            url: 'https://undisputed-rs.com/community/index.php?/rss/11-event-aftermath.xml/',
-            refresh: 2000
-        });
-
-        feeder.add({
-            url: 'https://undisputed-rs.com/community/index.php?/rss/8-media-section.xml/',
-            refresh: 2000
-        });
-
-        feeder.add({
-            url: 'https://undisputed-rs.com/community/index.php?/rss/7-pvp.xml/',
-            refresh: 2000
-        });
-
-        feeder.add({
-            url: 'https://undisputed-rs.com/community/index.php?/rss/6-off-topic.xml/',
-            refresh: 2000
-        });
-
-        feeder.add({
-            url: 'https://undisputed-rs.com/community/index.php?/rss/5-runescape.xml/',
-            refresh: 2000
-        });
-
-        feeder.add({
-            url: 'https://undisputed-rs.com/community/index.php?/rss/4-introductions.xml/',
-            refresh: 2000
-        });
-
-        feeder.add({
-            url: 'https://undisputed-rs.com/community/index.php?/rss/1-goals-and-achievements.xml/',
-            refresh: 2000
+        config.rssFeeds.forEach(url => {
+            feeder.add({
+                url,
+                refresh: 2000
+            });
         });
     });
 
